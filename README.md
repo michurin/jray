@@ -1,5 +1,8 @@
 # jray
 
+[![build](https://github.com/michurin/jray/actions/workflows/ci.yaml/badge.svg)](https://github.com/michurin/jray/actions/workflows/ci.yaml)
+[![codecov](https://codecov.io/gh/michurin/jray/graph/badge.svg?token=HSQJS6AQFZ)](https://codecov.io/gh/michurin/jray)
+
 `jray` is a CLI utility for "X-ray" inspection of JSON data.
 
 Like an X-ray, it lets you see through complex, deeply nested,
