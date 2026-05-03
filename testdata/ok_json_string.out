@@ -1,0 +1,5 @@
+.A = false (bool)
+.B | .x[0] = 1 (float)
+.B | .x[1] = 2 (float)
+.B | .y = true (bool)
+.C = str (string)
