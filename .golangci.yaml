@@ -5,6 +5,7 @@ linters:
     - exhaustruct
     - gochecknoglobals
     - gochecknoinits
+    - gomodguard # deprecated
     - nlreturn
     - noinlineerr
     - varnamelen
@@ -33,7 +34,7 @@ linters:
     nestif:
       min-complexity: 6
     mnd:
-      ignored-numbers: [1000, 1000000]
+      ignored-numbers: ["1000", "1000000"]
     lll:
       line-length: 160
     staticcheck:
