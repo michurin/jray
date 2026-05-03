@@ -19,7 +19,7 @@ import (
 )
 
 const helpMessage = "" +
-	"jsonguide [-c] [-s] [-h] <in.json >out.txt\n" +
+	"jray [-c] [-s] [-h] <in.json >out.txt\n" +
 	"  -c force colored output\n" +
 	"  -s shallow output (do not dive into JSON-strings)\n" +
 	"  -h help message"
