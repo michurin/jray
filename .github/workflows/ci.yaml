@@ -38,3 +38,4 @@ jobs:
           files: ./coverage.txt
           verbose: true
           token: ${{ secrets.CODECOV_TOKEN }} # required
+      - run: "integration-tests/jq_keys_run.sh"
