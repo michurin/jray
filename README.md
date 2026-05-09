@@ -154,3 +154,7 @@ echo '{"A":"a","A":"b"}' | jray
 ```sh
 go install github.com/michurin/jray@latest
 ```
+
+## Links
+
+- [Reddit: One more tool for JSON inspection](https://www.reddit.com/r/json/comments/1t2cz9e/one_more_tool_for_json_inspection/)
