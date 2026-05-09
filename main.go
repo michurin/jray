@@ -13,7 +13,6 @@ import (
 	"os"
 	"regexp"
 	"strconv"
-	"strings"
 	"time"
 	"unicode/utf8"
 )
@@ -56,7 +55,7 @@ func (r *tokenReader) errContext() string {
 	for b < bodyLen && !utf8.RuneStart(body[b]) {
 		b++
 	}
-	return strings.ReplaceAll(string(body[a:b]), "\n", `\n`)
+	return quotedString(string(body[a:b]), false)
 }
 
 type colorTheme struct {
@@ -179,7 +178,7 @@ func object(source *tokenReader, w *writer, deepLook bool, prefix string) bool {
 			w.err("object", prefix, fmt.Sprintf("Key is not string: %[1]v (%[1]T)", tkn))
 			return false
 		}
-		if value(source, w, deepLook, prefix+sep+keyPath(key)) {
+		if value(source, w, deepLook, prefix+keyPathElement(sep, key)) {
 			return true
 		}
 		empty = false
@@ -264,11 +263,11 @@ func startNested(t []byte, sep string, w *writer, deepLook bool, prefix string) 
 	return false
 }
 
-func keyPath(key string) string {
+func keyPathElement(sep, key string) string {
 	if isSimpleKey(key) {
-		return key
+		return sep + key
 	}
-	return quotedKey(key)
+	return `["` + quotedString(key, true) + `"]`
 }
 
 func isSimpleKey(s string) bool {
@@ -290,19 +289,19 @@ var specialSymbols = map[rune][]rune{
 	'\t': {'\\', 't'},
 }
 
-func quotedKey(s string) string {
+func quotedString(s string, strict bool) string {
 	o := []rune(nil)
 	for _, r := range s {
 		if a, ok := specialSymbols[r]; ok {
 			o = append(o, a...)
 			continue
 		}
-		if r == '\\' || r == '"' {
+		if strict && (r == '\\' || r == '"') {
 			o = append(o, '\\')
 		}
 		o = append(o, r)
 	}
-	return `["` + string(o) + `"]`
+	return string(o)
 }
 
 func App(in io.Reader, out io.Writer, outStream fs.File, args []string) int {
