@@ -10,9 +10,11 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"math"
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 	"unicode/utf8"
 )
@@ -215,7 +217,7 @@ func value(source *tokenReader, w *writer, deepLook bool, prefix string) bool {
 			}
 			if len(t) == 36 && reUUIDv7.MatchString(t) {
 				if ts, err := strconv.ParseInt(t[0:8]+t[9:13], 16, 64); err == nil {
-					w.msg(prefix, t, time.Unix(ts/1000, (ts%1000)*1_000_000).UTC().Format(time.DateTime+".000")+" UTC", "string/UUIDv7")
+					w.msg(prefix, t, timeString(float64(ts)/1000), "string/UUIDv7")
 					return false
 				}
 			}
@@ -226,12 +228,11 @@ func value(source *tokenReader, w *writer, deepLook bool, prefix string) bool {
 		fs := strconv.FormatFloat(t, 'f', -1, 64)
 		if deepLook {
 			if t >= 1_700_000_000 && t < 2_000_000_000 {
-				w.msg(prefix, fs, time.Unix(int64(t), 0).UTC().Format(time.DateTime)+" UTC", "float/timestamp")
+				w.msg(prefix, fs, timeString(t), "float/timestamp")
 				return false
 			}
 			if t >= 1_700_000_000_000 && t < 2_000_000_000_000 {
-				st := int64(t)
-				w.msg(prefix, fs, time.Unix(st/1000, (st%1000)*1_000_000).UTC().Format(time.DateTime+".000")+" UTC", "float/mstimestamp")
+				w.msg(prefix, fs, timeString(t/1000), "float/mstimestamp")
 				return false
 			}
 		}
@@ -302,6 +303,17 @@ func quotedString(s string, strict bool) string {
 		o = append(o, r)
 	}
 	return string(o)
+}
+
+func timeString(t float64) string {
+	i, f := math.Modf(t)
+	fs := strconv.FormatFloat(f, 'g', 6, 64)
+	if strings.HasPrefix(fs, "0.") {
+		fs = fs[1:]
+	} else {
+		fs = ""
+	}
+	return time.Unix(int64(i), int64(f*1_000_000_000)).UTC().Format(time.DateTime) + fs + " UTC"
 }
 
 func App(in io.Reader, out io.Writer, outStream fs.File, args []string) int {
