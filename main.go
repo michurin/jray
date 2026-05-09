@@ -31,6 +31,12 @@ type tokenReader struct {
 	body      *bytes.Buffer
 }
 
+func newDecoder(r io.Reader) *json.Decoder {
+	d := json.NewDecoder(r)
+	d.UseNumber()
+	return d
+}
+
 func (r *tokenReader) token() (json.Token, error) {
 	if r.lastToken != nil {
 		t := *r.lastToken
@@ -47,7 +53,7 @@ func (r *tokenReader) unread(t json.Token) {
 func (r *tokenReader) errContext() string {
 	const contextSize = 20
 	offset := r.dec.InputOffset()
-	body := r.body.Bytes()
+	body := r.body.Bytes() // this method won't call for r with r.body==nil
 	bodyLen := int64(len(body))
 	a := min(max(offset-contextSize, 0), bodyLen)
 	for a > 0 && !utf8.RuneStart(body[a]) {
@@ -224,19 +230,21 @@ func value(source *tokenReader, w *writer, deepLook bool, prefix string) bool {
 		}
 		w.msg(prefix, t, "", "string")
 		return false
-	case float64:
-		fs := strconv.FormatFloat(t, 'f', -1, 64)
+	case json.Number:
 		if deepLook {
-			if t >= 1_700_000_000 && t < 2_000_000_000 {
-				w.msg(prefix, fs, timeString(t), "float/timestamp")
-				return false
-			}
-			if t >= 1_700_000_000_000 && t < 2_000_000_000_000 {
-				w.msg(prefix, fs, timeString(t/1000), "float/mstimestamp")
-				return false
+			fl, err := t.Float64()
+			if err == nil {
+				if fl >= 1_700_000_000 && fl < 2_000_000_000 {
+					w.msg(prefix, t.String(), timeString(fl), "float/timestamp")
+					return false
+				}
+				if fl >= 1_700_000_000_000 && fl < 2_000_000_000_000 {
+					w.msg(prefix, t.String(), timeString(fl/1000), "float/mstimestamp")
+					return false
+				}
 			}
 		}
-		w.msg(prefix, fs, "", "float")
+		w.msg(prefix, t.String(), "", "float")
 		return false
 	case bool:
 		w.msg(prefix, strconv.FormatBool(t), "", "bool")
@@ -253,7 +261,7 @@ var reUUIDv7 = regexp.MustCompile("^([0-9a-zA-Z]{8})-([0-9a-zA-Z]{4})-7[0-9a-zA-
 
 func startNested(t []byte, sep string, w *writer, deepLook bool, prefix string) bool {
 	if json.Valid(t) {
-		d := &tokenReader{dec: json.NewDecoder(bytes.NewReader(t)), body: nil}
+		d := &tokenReader{dec: newDecoder(bytes.NewReader(t)), body: nil}
 		tkn, err := d.token()
 		if err == nil && (tkn == json.Delim('{') || tkn == json.Delim('[')) {
 			d.unread(tkn)
@@ -341,7 +349,7 @@ func App(in io.Reader, out io.Writer, outStream fs.File, args []string) int {
 		w.c.hintPost = ")"
 	}
 	body := new(bytes.Buffer)
-	dec := json.NewDecoder(io.TeeReader(in, body))
+	dec := newDecoder(io.TeeReader(in, body))
 	for {
 		if value(&tokenReader{dec: dec, body: body}, w, deepLook, ".") {
 			return 1
