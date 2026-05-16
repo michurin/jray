@@ -10,3 +10,6 @@
 .[9] = 019ddddd-dddd-7ddd-0123-456789abcdef (2026-04-30 10:09:58.237 UTC) (string/UUIDv7)
 .[10] = 019DDDDD-DDDD-7DDD-0123-456789ABCDEF (2026-04-30 10:09:58.237 UTC) (string/UUIDv7)
 .[11] = 019ddddd-dddd-4ddd-0123-456789abcdef (string)
+.[12] = 019Xdddd-dddd-7ddd-0123-456789abcdef (string)
+.[13] = 029ddddd-dddd-7ddd-0123-456789abcdef (string)
+.[14] = 009ddddd-dddd-7ddd-0123-456789abcdef (string)
