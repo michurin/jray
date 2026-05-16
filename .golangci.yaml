@@ -5,6 +5,7 @@ linters:
     - exhaustruct
     - gochecknoglobals
     - gochecknoinits
+    - godot
     - gomodguard # deprecated
     - nlreturn
     - noinlineerr
