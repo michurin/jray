@@ -262,7 +262,8 @@ func value(source *tokenReader, w *writer, deepLook bool, prefix string) bool {
 	return true
 }
 
-var reUUIDv7 = regexp.MustCompile("^([0-9a-zA-Z]{8})-([0-9a-zA-Z]{4})-7[0-9a-zA-Z]{3}-[0-9a-zA-Z]{4}-[0-9a-zA-Z]{12}$")
+// ^01.* matches date range from 10 Nov 2004 to 07 Sep 2039
+var reUUIDv7 = regexp.MustCompile("^01[[:xdigit:]]{6}-[[:xdigit:]]{4}-7[[:xdigit:]]{3}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$")
 
 func startNested(t []byte, sep string, w *writer, deepLook bool, prefix string) bool {
 	if json.Valid(t) {
