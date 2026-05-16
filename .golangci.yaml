@@ -9,7 +9,6 @@ linters:
     - nlreturn
     - noinlineerr
     - varnamelen
-    - wrapcheck
     - wsl
     - wsl_v5
   settings:
@@ -49,9 +48,6 @@ linters:
       - path: "_test\\.go$"
         linters:
           - gosec
-      - source: "if err == io\\.EOF"
-        linters:
-          - errorlint
       - source: "fmt\\.Fprint(f|ln)"
         linters:
           - errcheck

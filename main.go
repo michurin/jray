@@ -7,6 +7,7 @@ import (
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"io/fs"
@@ -43,7 +44,11 @@ func (r *tokenReader) token() (json.Token, error) {
 		r.lastToken = nil
 		return t, nil
 	}
-	return r.dec.Token()
+	t, err := r.dec.Token()
+	if err != nil {
+		return nil, fmt.Errorf("(%s) %w", r.errContext(), err)
+	}
+	return t, nil
 }
 
 func (r *tokenReader) unread(t json.Token) {
@@ -127,12 +132,12 @@ func array(source *tokenReader, w *writer, deepLook bool, prefix string) bool {
 	for {
 		pfx := fmt.Sprintf("%s[%d]", prefix, n)
 		tkn, err := source.token()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			w.err("array", pfx, "Unexpected EOF")
 			return true
 		}
 		if err != nil {
-			w.err("array", pfx, "Parse error: ("+source.errContext()+") "+err.Error())
+			w.err("array", pfx, "Parse error: "+err.Error())
 			return true
 		}
 		if t, ok := tkn.(json.Delim); ok {
@@ -163,12 +168,12 @@ func object(source *tokenReader, w *writer, deepLook bool, prefix string) bool {
 	empty := true
 	for {
 		tkn, err := source.token()
-		if err == io.EOF {
+		if errors.Is(err, io.EOF) {
 			w.err("object", prefix, "Unexpected EOF")
 			return true
 		}
 		if err != nil {
-			w.err("object", prefix, "Parse error: ("+source.errContext()+") "+err.Error())
+			w.err("object", prefix, "Parse error: "+err.Error())
 			return true
 		}
 		if t, ok := tkn.(json.Delim); ok {
@@ -195,12 +200,12 @@ func object(source *tokenReader, w *writer, deepLook bool, prefix string) bool {
 
 func value(source *tokenReader, w *writer, deepLook bool, prefix string) bool {
 	tkn, err := source.token()
-	if err == io.EOF {
+	if errors.Is(err, io.EOF) {
 		w.err("value", prefix, "Unexpected EOF")
 		return true
 	}
 	if err != nil {
-		w.err("value", prefix, "Parse error: ("+source.errContext()+") "+err.Error())
+		w.err("value", prefix, "Parse error: "+err.Error())
 		return true
 	}
 	switch t := tkn.(type) {
