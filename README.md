@@ -17,10 +17,16 @@ It automatically unpack common embedded encodings and formats,
 including timestamps, strings that contain JSON, and Base64-encoded JSON-data.
 See examples and details below.
 
+Generated paths are fully compatible with [`jq`](https://jqlang.org/).
+
+The provided `.path=value` format is convenient to use with other command-line utilities
+such as [`diff`](https://man7.org/linux/man-pages/man1/diff.1.html)
+or [`grep`](https://man7.org/linux/man-pages/man1/grep.1.html).
+
 Use cases:
 
 * debugging and inspecting JSON
-* analyzing malformed or partially valid data
+* analyzing malformed or partially valid JSON-data
 * preparing clear and actionable bug reports
 * exploring unknown or complex JSON structures
 
