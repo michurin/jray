@@ -1,17 +1,23 @@
-[
-  1699999999,
-  2000000001,
-  1777777777,
-  1777777777.77,
-  1777777777.77777777,
-  1699999999999,
-  1777777777777,
-  1777777777777.77,
-  2000000000001,
-  "019ddddd-dddd-7ddd-0123-456789abcdef",
-  "019DDDDD-DDDD-7DDD-0123-456789ABCDEF",
-  "019ddddd-dddd-4ddd-0123-456789abcdef",
-  "019Xdddd-dddd-7ddd-0123-456789abcdef",
-  "029ddddd-dddd-7ddd-0123-456789abcdef",
-  "009ddddd-dddd-7ddd-0123-456789abcdef"
-]
+{
+  "timestamp": {
+    "too_small": 1699999999,
+    "too_big": 2000000001,
+    "in_range_int": 1777777777,
+    "in_range_float": 1777777777.77,
+    "in_range_long_fractional_part": 1777777777.77777777
+  },
+  "timestamp_ms": {
+    "too_small": 1699999999999,
+    "too_big": 2000000000001,
+    "in_range_int": 1777777777777,
+    "in_range_float": 1777777777777.77
+  },
+  "uuidv7": {
+    "lowercase": "019ddddd-dddd-7ddd-0123-456789abcdef",
+    "uppercase": "019DDDDD-DDDD-7DDD-0123-456789ABCDEF",
+    "invalid_version": "019ddddd-dddd-4ddd-0123-456789abcdef",
+    "invalid_hexdigit": "019Xdddd-dddd-7ddd-0123-456789abcdef",
+    "out_of_range_upper": "029ddddd-dddd-7ddd-0123-456789abcdef",
+    "out_of_range_lower": "009ddddd-dddd-7ddd-0123-456789abcdef"
+  }
+}
